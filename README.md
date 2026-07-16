@@ -1,4 +1,4 @@
-# [logo.subactor.com](http://www.subactor.com)
+# [logo.subactor.com](http://logo.subactor.com)
 
 + [subactor.com](http://www.subactor.com)
 + [docs](http://docs.subactor.com)
