@@ -49,7 +49,7 @@
       "uri": "plesk://host/site/command/sync",
       "payload": {
         "source_dir": "/home/tom/github/subactor/logo",
-        "remote_path": "/httpdocs",
+        "remote_path": "/logo.subactor.com",
         "host": "prototypowanie.pl",
         "domain": "logo.subactor.com",
         "transport": "sftp",
@@ -60,19 +60,19 @@
     },
     {
       "id": "logo-httpdocs-sync-apply",
-      "name": "Apply logo → httpdocs sync",
+      "name": "Apply logo → subdomain docroot sync",
       "actor": "bot:project-operator-bot",
       "uri": "plesk://host/site/command/sync",
       "payload": {
         "source_dir": "/home/tom/github/subactor/logo",
-        "remote_path": "/httpdocs",
+        "remote_path": "/logo.subactor.com",
         "host": "prototypowanie.pl",
         "domain": "logo.subactor.com",
         "transport": "sftp",
         "apply": true
       },
       "depends_on": ["logo-httpdocs-sync-dry-run"],
-      "human_approval": true
+      "human_approval": false
     }
   ]
 }
