@@ -1,0 +1,78 @@
+{
+  "id": "logo-httpdocs-sync",
+  "name": "Publish logo → Plesk httpdocs (logo.subactor.com)",
+  "description": "Doctor and TLS probe first, then SFTP dry-run. Apply remains fail-closed behind mutation gates, plan_hash and a signed grant. DNS cutover is a separate boundary operation.",
+  "situation": {
+    "source_dir": "/home/tom/github/subactor/logo",
+    "host": "prototypowanie.pl",
+    "domain": "logo.subactor.com",
+    "origin_ip": "217.160.250.222"
+  },
+  "uri_processes": [
+    {
+      "id": "logo-connector-doctor",
+      "name": "Check Plesk connector readiness",
+      "actor": "bot:project-operator-bot",
+      "uri": "plesk://host/doctor/query/report",
+      "payload": {},
+      "depends_on": [],
+      "human_approval": false
+    },
+    {
+      "id": "logo-ssl-probe",
+      "name": "Probe origin TLS for logo.subactor.com",
+      "actor": "bot:project-operator-bot",
+      "uri": "plesk://host/site/command/ssl-ensure",
+      "payload": {
+        "hostname": "logo.subactor.com",
+        "origin_ip": "217.160.250.222",
+        "base_url": "https://prototypowanie.pl:8443",
+        "provider": "auto",
+        "apply": false
+      },
+      "depends_on": ["logo-connector-doctor"],
+      "human_approval": false
+    },
+    {
+      "id": "logo-httpdocs-methods",
+      "name": "Detect SFTP/FTP deployment transports",
+      "actor": "bot:project-operator-bot",
+      "uri": "plesk://host/site/query/methods",
+      "payload": {"host": "prototypowanie.pl"},
+      "depends_on": ["logo-ssl-probe"],
+      "human_approval": false
+    },
+    {
+      "id": "logo-httpdocs-sync-dry-run",
+      "name": "Dry-run logo → httpdocs sync plan",
+      "actor": "bot:project-operator-bot",
+      "uri": "plesk://host/site/command/sync",
+      "payload": {
+        "source_dir": "/home/tom/github/subactor/logo",
+        "remote_path": "/httpdocs",
+        "host": "prototypowanie.pl",
+        "domain": "logo.subactor.com",
+        "transport": "sftp",
+        "apply": false
+      },
+      "depends_on": ["logo-httpdocs-methods"],
+      "human_approval": false
+    },
+    {
+      "id": "logo-httpdocs-sync-apply",
+      "name": "Apply logo → httpdocs sync",
+      "actor": "bot:project-operator-bot",
+      "uri": "plesk://host/site/command/sync",
+      "payload": {
+        "source_dir": "/home/tom/github/subactor/logo",
+        "remote_path": "/httpdocs",
+        "host": "prototypowanie.pl",
+        "domain": "logo.subactor.com",
+        "transport": "sftp",
+        "apply": true
+      },
+      "depends_on": ["logo-httpdocs-sync-dry-run"],
+      "human_approval": true
+    }
+  ]
+}
